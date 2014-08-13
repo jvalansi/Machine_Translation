@@ -34,7 +34,6 @@ if __name__ == '__main__':
     repl = r'\g<1> \g<2>'
     l = min(len(e),len(f))
     for i in range(l):
-        #TODO:  space non words
         
         e[i] = re.sub(pattern, repl, e[i])
         if(len(e[i].split()) > t or len(f[i].split()) > t):

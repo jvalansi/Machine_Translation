@@ -85,18 +85,23 @@ def join_matrices(M1,M2):
     matrix["A"] = (matrix["A"]).astype(bool)*1
     return matrix
 
-if __name__ == '__main__':
+def get_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('-i','--infiles', type=argparse.FileType('r+'), nargs=2, 
                        help='files to align')
     parser.add_argument('-o','--outfile', type=argparse.FileType('w'), 
                        help='aligned phrases file')
-    args = parser.parse_args()
+    return(parser.parse_args())
+
+
+if __name__ == '__main__':
+
+    args = get_args()
 
     content1 = args.infiles[0].readlines()
     content2 = args.infiles[1].readlines()
     l = min(len(content1),len(content2))
-    print("phrases: " +str(l/3))
+    print("sentences: " +str(l/3))
     phrases = []
 #    for i in sentences:
     for i in range(l/3): 

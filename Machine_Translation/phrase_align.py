@@ -126,12 +126,13 @@ if __name__ == '__main__':
     print("phrases: " +str(l))
     phrases_ = zip(*phrases)
     count_ef = collections.Counter(phrases)
-    count_f = collections.Counter(phrases_[1])
+    count_f = collections.Counter(phrases_[0])
 #    for i in phrases
     for i in range(len(phrases)):
 #        get translation score
         N_ef = count_ef[phrases[i]]
-        N_f = count_f[phrases_[1][i]] #TODO: if too small (less than 3) disregard
+        N_f = count_f[phrases_[0][i]] #TODO: if too small (less than 3) disregard
         score = math.log(float(N_ef)/float(N_f))
+#       "e => f p"  
         args.outfile.write(' '.join(phrases[i][0]) + " => " + ' '.join(phrases[i][1]) + ' ' + str(score)  + '\n')
         

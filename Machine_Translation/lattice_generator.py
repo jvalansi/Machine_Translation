@@ -10,10 +10,10 @@ def line2tuple(line):
 #     (' '.join(phrases[i][0]) + " => " + ' '.join(phrases[i][1]) + ' ' + str(score)  + '\n')
     pattern = "((?:\S+\s)*)=>\s((?:\S+\s)*)(-?\d+\.\d+)"
     t = re.match(pattern,line)
-    e = t.group(1).split()
-    f = t.group(2).split()
+    f = t.group(1).split()
+    e = t.group(2).split()
     p = t.group(3)
-    t = (tuple(e),tuple(f),p)
+    t = (tuple(f),tuple(e),p)
     return(t)
     
 
@@ -42,12 +42,14 @@ if __name__ == '__main__':
     phrase_file = args.phrase_table.readlines();
     
     phrases = {}
+    print("phrases to tuples")
     for p in phrase_file:
         t = line2tuple(p)
-        if t[1] not in phrases:
-            phrases[t[1]] = {}            
-        phrases[t[1]][t[0]] = t[2]
+        if t[0] not in phrases:
+            phrases[t[0]] = {}            
+        phrases[t[0]][t[1]] = t[2]
     
+    print("writing to file")
     for s in sentences:
         lattice = parse_sentence(s,phrases)
         f = open('_'.join(s.split())+'.lattice', 'w')

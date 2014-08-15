@@ -30,12 +30,14 @@ if __name__ == '__main__':
     et = open('etemp', 'w')
     ft = open('ftemp', 'w')
 
-    pattern = r'(\S)(\W)'
+    pattern1 = r'(\S)(\W)'
+    pattern2 = r'(\W)(\S)'
     repl = r'\g<1> \g<2>'
     l = min(len(e),len(f))
     for i in range(l):
         
-        e[i] = re.sub(pattern, repl, e[i])
+        e[i] = re.sub(pattern1, repl, e[i])
+        e[i] = re.sub(pattern2, repl, e[i])
         if(len(e[i].split()) > t or len(f[i].split()) > t):
             continue
         et.write(e[i])

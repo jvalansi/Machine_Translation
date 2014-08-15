@@ -10,7 +10,7 @@ import nltk
 import heapq
 
 
-def lines2lattice(ll,lm):
+def lines2lattice(ll,lm, lmbd):
 #     lattice += str(i) + "-" + str(j-1) + ": " + " ".join(phrase) +"\n"
     f_pattern = "(\d+)-(\d+):((?:\s\S+)*)"
 #     lattice += " ".join(p) + " " + phrases[phrase][p] + "\n"
@@ -28,7 +28,7 @@ def lines2lattice(ll,lm):
 #                     p_LM -= lm.logprob(e[i+2],[e[i],e[i+1]])
                     p_LM += lm[e[i],e[i+1]].logprob(e[i+2])
                 phi = float(m.group(2))
-                lattice.append((phi + p_LM,e,f))
+                lattice.append(((1-lmbd)*phi + lmbd*p_LM,e,f))
     return(lattice)
 
 def lm2dict(lm, e):
@@ -79,6 +79,7 @@ if __name__ == '__main__':
     args = get_args()
     lattice_lines = args.lattice_file.readlines()
     language_model = args.language_model.read();
+    lmbd = 0.1
 
     tokens = list(nltk.corpus.genesis.words('english-kjv.txt')) #TODO: use different corpuses
 #     estimator = lambda fdist, bins: nltk.probability.LidstoneProbDist(fdist, 0.2)
@@ -91,14 +92,13 @@ if __name__ == '__main__':
 #     lm = nltk.probability.ConditionalProbDist(cfd, nltk.probability.LidstoneProbDist, 0.2)
     lm = nltk.probability.ConditionalProbDist(cfd, nltk.probability.WittenBellProbDist, 1000)
 
-    lattice = lines2lattice(lattice_lines, lm)
+    lattice = lines2lattice(lattice_lines, lm, lmbd)
     n=0
     for l in lattice:
-        n = max(max(l[2]),n)
+        n = max(max(l[2])+1,n)
     print(n)
 
     e = zip(*lattice)[1]
-    print(len(e))
     lm_dict = lm2dict(lm, e)
 
     f = open('lm', 'w')
@@ -107,8 +107,9 @@ if __name__ == '__main__':
     i=0
     for l in lm_dict:
         i+=1
-        if(i>10000):
-            break
+        if(not i%100000):
+            print(i)
+#         s += str(l)+"\n"
         s += str(l)+ " => " + str(lm_dict[l]) + "\n"
     f.write(s)
     f.close()
@@ -140,11 +141,12 @@ if __name__ == '__main__':
     for (p,e,f) in lattice:
 #         stacks[len(f)].append((p,e,f))
         heapq.heappush(stacks[len(f)],(p,e,f))
+
     for s in stacks:
         print(s)
-        print(heapq.nlargest(50, stacks[s]))
 #         stacks[s] = sorted(stacks[s],key = lambda l:(l[2]))
 #         stacks[s] = stacks[s][-10000:]
+        print(heapq.nlargest(50, stacks[s]))
         i=0
         for (p,e,f) in stacks[s]:
             i+=1
@@ -156,15 +158,17 @@ if __name__ == '__main__':
                     f__ = f+f_
                     e__ = e+e_
                     if len(e)>1:
-                        p += lm_dict[(e[-2],e[-1],e_[0])]
+                        p += lmbd*lm_dict[(e[-2],e[-1],e_[0])]
                     if len(e_)>1:
-                        p += lm_dict[(e[-1],e_[0],e_[1])]
+                        p += lmbd*lm_dict[(e[-1],e_[0],e_[1])]
+#                     recombine with existing hypothesis if possible
+#                     prune(stacks[s])
 #                     stacks[len(f__)].append((p+p_,e__,f__))
-                    heapq.heappush(stacks[len(f__)],(p+p_,e__,f__))
                     if(len(stacks[len(f__)])>10000):
-                        heapq.heappop(stacks[len(f__)])
-    #                     recombine with existing hypothesis if possible
-    #                     prune(stacks[s])
+                        heapq.heappushpop(stacks[len(f__)],(p+p_,e__,f__))
+                    else:
+                        heapq.heappush(stacks[len(f__)],(p+p_,e__,f__))
+                        
 
     print(heapq.nlargest(10, stacks[n]))
 #     print(stacks[n][-1])

@@ -148,14 +148,18 @@ if __name__ == '__main__':
                         heapq.heappushpop(stacks[len(f__)],(p+p_,e__,f__))
                     else:
                         heapq.heappush(stacks[len(f__)],(p+p_,e__,f__))
-                        
+
 
     print(heapq.nlargest(10, stacks[n]))
 #     print(stacks[n][-1])
 
-    translations = heapq.nlargest(10, stacks[n])
+    translations = heapq.nlargest(1, stacks[n])
     tf = open('translation', 'w')
     for (p,e,f) in translations:
-        tf.write(' '.join(e)+'\n')
+        candidate = ' '.join(e)
+        tf.write(candidate +'\n')
     tf.close()
-    
+
+    otf = open('original_translation', 'r+')
+    reference = otf.read()
+    print(reference)

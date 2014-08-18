@@ -22,11 +22,11 @@ def parse_sentence(s,phrases):
     lattice = ""
     for i in range(len(s)):
         for j in range(i+1,min(i+8,len(s)+1)):
-            phrase = tuple(s[i:j])
-            lattice += str(i) + "-" + str(j-1) + ": " + " ".join(phrase) +"\n"
-            if phrase in phrases:
-                for p in phrases[phrase]:
-                    lattice += " ".join(p) + " " + phrases[phrase][p] + "\n"
+            f = tuple(s[i:j])
+            lattice += str(i) + "-" + str(j-1) + ": " + " ".join(f) +"\n"
+            if f in phrases:
+                for e in phrases[f]:
+                    lattice += " ".join(e) + " " + phrases[f][e] + "\n"
             lattice += "\n"
     return(lattice)
 
@@ -44,10 +44,10 @@ if __name__ == '__main__':
     phrases = {}
     print("phrases to tuples")
     for p in phrase_file:
-        t = line2tuple(p)
-        if t[0] not in phrases:
-            phrases[t[0]] = {}            
-        phrases[t[0]][t[1]] = t[2]
+        (f,e,p) = line2tuple(p)
+        if f not in phrases:
+            phrases[f] = {}            
+        phrases[f][e] = p
     
     print("writing to file")
     for s in sentences:

@@ -130,7 +130,7 @@ if __name__ == '__main__':
         i=0
         for (p,e,f) in stacks[s]:
             i+=1
-            if not i%1000:
+            if not i%10000:
                 print("sentence " + str(i) + ": " + time.strftime('%X'))
             for (p_,e_,f_) in lattice:
                 if len(set(f).intersection(set(f_))) == 0:

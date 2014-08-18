@@ -101,38 +101,18 @@ if __name__ == '__main__':
     e = zip(*lattice)[1]
     lm_dict = lm2dict(lm, e)
 
-    f = open('lm', 'w')
-    s = ""
-    print(len(lm_dict))
-    i=0
-    for l in lm_dict:
-        i+=1
-        if(not i%100000):
-            print(i)
-#         s += str(l)+"\n"
-        s += str(l)+ " => " + str(lm_dict[l]) + "\n"
-    f.write(s)
-    f.close()
-
-
-#     e = set([i for t in e for i in t])
-#     e_dict = {}
-#     for ind,val in enumerate(e):
-#         e_dict[val] = ind
-#
-#     new_lattice = []
-#     for (p,e,f) in lattice:
-#         new_e = tuple()
-#         for i in e:
-#             new_e += (e_dict[i],)
-#         new_lattice.append((p,new_e,f))
-#     lattice = new_lattice
-#
-#     new_lm_dict = {}
+#     f = open('lm', 'w')
+#     s = ""
+#     print(len(lm_dict))
+#     i=0
 #     for l in lm_dict:
-#         new_l = (e_dict[l[0]],e_dict[l[1]],e_dict[l[2]])
-#         new_lm_dict[new_l] = lm_dict[l]
-#     lm_dict = new_lm_dict
+#         i+=1
+#         if(not i%100000):
+#             print(i)
+# #         s += str(l)+"\n"
+#         s += str(l)+ " => " + str(lm_dict[l]) + "\n"
+#     f.write(s)
+#     f.close()
 
     print("decoding")
     stacks = {}
@@ -172,3 +152,10 @@ if __name__ == '__main__':
 
     print(heapq.nlargest(10, stacks[n]))
 #     print(stacks[n][-1])
+
+    translations = heapq.nlargest(10, stacks[n])
+    tf = open('translation', 'w')
+    for (p,e,f) in translations:
+        tf.write(' '.join(e)+'\n')
+    tf.close()
+    

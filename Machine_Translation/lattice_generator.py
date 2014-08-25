@@ -52,7 +52,8 @@ if __name__ == '__main__':
     print("writing to file")
     for s in sentences:
         lattice = parse_sentence(s,phrases)
-        f = open('_'.join(s.split())+'.lattice', 'w')
+        name = str(sentences.index(s))+'_'+'_'.join(s.split())+'.lattice'
+        f = open('lattices/'+name, 'w')
         f.write(lattice)
         f.close()
     

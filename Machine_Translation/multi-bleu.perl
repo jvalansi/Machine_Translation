@@ -48,7 +48,7 @@ while(<STDIN>) {
     my $length_translation_this_sentence = scalar(@WORD);
     my ($closest_diff,$closest_length) = (9999,9999);
     foreach my $reference (@{$REF[$s]}) {
-#      print "$s $_ <=> $reference\n";
+    print "$s $_ <=> $reference\n";
   $reference = lc($reference) if $lowercase;
 	my @WORD = split(' ',$reference);
 	my $length = scalar(@WORD);
@@ -56,7 +56,7 @@ while(<STDIN>) {
 	if ($diff < $closest_diff) {
 	    $closest_diff = $diff;
 	    $closest_length = $length;
-	    # print STDERR "$s: closest diff ".abs($length_translation_this_sentence-$length)." = abs($length_translation_this_sentence-$length), setting len: $closest_length\n";
+	    print STDERR "$s: closest diff ".abs($length_translation_this_sentence-$length)." = abs($length_translation_this_sentence-$length), setting len: $closest_length\n";
 	} elsif ($diff == $closest_diff) {
             $closest_length = $length if $length < $closest_length;
             # from two references with the same closeness to me
@@ -75,7 +75,7 @@ while(<STDIN>) {
 		if (!defined($REF_NGRAM{$ngram}) || 
 		    $REF_NGRAM{$ngram} < $REF_NGRAM_N{$ngram}) {
 		    $REF_NGRAM{$ngram} = $REF_NGRAM_N{$ngram};
-#	    print "$i: REF_NGRAM{$ngram} = $REF_NGRAM{$ngram}<BR>\n";
+	    print "REF_NGRAM{$ngram} = $REF_NGRAM{$ngram}<BR>\n";
 		}
 	    }
 	}
@@ -95,18 +95,18 @@ while(<STDIN>) {
 	    $ngram =~ /^(\d+) /;
 	    my $n = $1;
             # my $corr = 0;
-#	print "$i e $ngram $T_NGRAM{$ngram}<BR>\n";
+	print "e $ngram $T_NGRAM{$ngram}<BR>\n";
 	    $TOTAL[$n] += $T_NGRAM{$ngram};
 	    if (defined($REF_NGRAM{$ngram})) {
 		if ($REF_NGRAM{$ngram} >= $T_NGRAM{$ngram}) {
 		    $CORRECT[$n] += $T_NGRAM{$ngram};
                     # $corr =  $T_NGRAM{$ngram};
-#	    print "$i e correct1 $T_NGRAM{$ngram}<BR>\n";
+	    print " e correct1 $T_NGRAM{$ngram}<BR>\n";
 		}
 		else {
 		    $CORRECT[$n] += $REF_NGRAM{$ngram};
                     # $corr =  $REF_NGRAM{$ngram};
-#	    print "$i e correct2 $REF_NGRAM{$ngram}<BR>\n";
+	    print "e correct2 $REF_NGRAM{$ngram}<BR>\n";
 		}
 	    }
             # $REF_NGRAM{$ngram} = 0 if !defined $REF_NGRAM{$ngram};
@@ -123,7 +123,7 @@ my @bleu=();
 for(my $n=1;$n<=4;$n++) {
   if (defined ($TOTAL[$n])){
     $bleu[$n]=($TOTAL[$n])?$CORRECT[$n]/$TOTAL[$n]:0;
-    # print STDERR "CORRECT[$n]:$CORRECT[$n] TOTAL[$n]:$TOTAL[$n]\n";
+    print STDERR "CORRECT[$n]:$CORRECT[$n] TOTAL[$n]:$TOTAL[$n]\n";
   }else{
     $bleu[$n]=0;
   }

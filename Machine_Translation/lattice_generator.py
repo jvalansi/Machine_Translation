@@ -21,12 +21,13 @@ def parse_sentence(s,phrases):
     s = s.split()
     lattice = ""
     for i in range(len(s)):
-        for j in range(i+1,min(i+8,len(s)+1)):
+        for j in range(i+1,min(i+args.phrase_size,len(s)+1)):
             f = tuple(s[i:j])
             lattice += str(i) + "-" + str(j-1) + ": " + " ".join(f) +"\n"
             if f in phrases:
-                for e in phrases[f]:
-                    lattice += " ".join(e) + " " + phrases[f][e] + "\n"
+                phrases_dict = sorted(phrases[f].items(), key=lambda x: float(x[1]), reverse = True)
+                for (e,p) in phrases_dict:
+                    lattice += " ".join(e) + " " + p + "\n"
             lattice += "\n"
     return(lattice)
 
@@ -36,6 +37,8 @@ if __name__ == '__main__':
                        help='File of Hebrew sentences to be translated by the system. Each sentence should be provided in a single line.')
     parser.add_argument('-p','--phrase_table', type=argparse.FileType('r+'), 
                        help='File containing the phrase table.')
+    parser.add_argument('-ps','--phrase_size', type=int, default=8,
+                       help='phrase_size')
     args = parser.parse_args()
 
     sentences = args.sentences_file.readlines()
@@ -43,16 +46,17 @@ if __name__ == '__main__':
     
     phrases = {}
     print("phrases to tuples")
-    for p in phrase_file:
-        (f,e,p) = line2tuple(p)
+    for phrase in phrase_file:
+        (f,e,p) = line2tuple(phrase)
         if f not in phrases:
-            phrases[f] = {}            
+            phrases[f] = {}
         phrases[f][e] = p
     
     print("writing to file")
     for s in sentences:
         lattice = parse_sentence(s,phrases)
-        name = str(sentences.index(s))+'_'+'_'.join(s.split())+'.lattice'
+#         name = str(sentences.index(s))+'_'+'_'.join(s.split())+'.lattice'
+        name = '{:05}'.format(sentences.index(s))+'.lattice'
         f = open('lattices/'+name, 'w')
         f.write(lattice)
         f.close()

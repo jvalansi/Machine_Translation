@@ -87,9 +87,11 @@ def join_matrices(M1,M2):
 
 def get_args():
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('-i','--infiles', type=argparse.FileType('r+'), nargs=2, 
-                       help='files to align')
-    parser.add_argument('-o','--outfile', type=argparse.FileType('w'), 
+    parser.add_argument('-e2f','--e2ffile', type=argparse.FileType('r+'), 
+                       help='english to foreign file to align')
+    parser.add_argument('-f2e','--f2efile', type=argparse.FileType('r+'), 
+                       help='foreign to english file to align')
+    parser.add_argument('-p','--pfile', type=argparse.FileType('w'), 
                        help='aligned phrases file')
     return(parser.parse_args())
 
@@ -98,9 +100,9 @@ if __name__ == '__main__':
 
     args = get_args()
 
-    content1 = args.infiles[0].readlines()
-    content2 = args.infiles[1].readlines()
-    l = min(len(content1),len(content2))
+    e2f = args.e2ffile.readlines()
+    f2e = args.f2efile.readlines()
+    l = min(len(e2f),len(f2e))
     print("sentences: " +str(l/3))
     phrases = []
 #    for i in sentences:
@@ -108,10 +110,10 @@ if __name__ == '__main__':
         if(not i%1000):
             print("sentence " + str(i) + ": " + time.strftime('%X'))
 #        get matrix1 from first direction
-        sentence = [content1[i*3],content1[i*3+1],content1[i*3+2]]
+        sentence = [f2e[i*3],f2e[i*3+1],f2e[i*3+2]]
         matrix1 = sentence2marix(sentence)
 #        get matrix2 from second direction
-        sentence = [content2[i*3],content2[i*3+1],content2[i*3+2]]
+        sentence = [e2f[i*3],e2f[i*3+1],e2f[i*3+2]]
         matrix2 = sentence2marix(sentence)        
 #        join matrices #TODO: something better
         matrix = join_matrices(matrix1,matrix2)
@@ -126,13 +128,13 @@ if __name__ == '__main__':
     print("phrases: " +str(l))
     phrases_ = zip(*phrases)
     count_ef = collections.Counter(phrases)
-    count_f = collections.Counter(phrases_[0])
+    count_f = collections.Counter(phrases_[1])
 #    for i in phrases
     for i in range(len(phrases)):
 #        get translation score
         N_ef = count_ef[phrases[i]]
-        N_f = count_f[phrases_[0][i]] #TODO: if too small (less than 3) disregard
+        N_f = count_f[phrases_[1][i]] #TODO: if too small (less than 3) disregard
         score = math.log(float(N_ef)/float(N_f))
 #       "e => f p"  
-        args.outfile.write(' '.join(phrases[i][0]) + " => " + ' '.join(phrases[i][1]) + ' ' + str(score)  + '\n')
+        args.pfile.write(' '.join(phrases[i][1]) + " => " + ' '.join(phrases[i][0]) + ' ' + str(score)  + '\n')
         

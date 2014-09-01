@@ -26,6 +26,7 @@ def parse_sentence(s,phrases):
             lattice += str(i) + "-" + str(j-1) + ": " + " ".join(f) +"\n"
             if f in phrases:
                 phrases_dict = sorted(phrases[f].items(), key=lambda x: float(x[1]), reverse = True)
+                phrases_dict = phrases_dict[:args.max_translations]
                 for (e,p) in phrases_dict:
                     lattice += " ".join(e) + " " + p + "\n"
             lattice += "\n"
@@ -39,6 +40,8 @@ if __name__ == '__main__':
                        help='File containing the phrase table.')
     parser.add_argument('-ps','--phrase_size', type=int, default=8,
                        help='phrase_size')
+    parser.add_argument('-mp','--max_translations', type=int, default=8,
+                       help='max allowed translations for phrase')
     args = parser.parse_args()
 
     sentences = args.sentences_file.readlines()

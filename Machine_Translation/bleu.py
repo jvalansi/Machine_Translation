@@ -45,7 +45,7 @@ def calc_bleu(translation, reference):
     return((score,brevity_penalty,bleu[1],bleu[2],bleu[3],bleu[4]))
 
 if __name__ == '__main__':
-    rf = open('text.eng', 'r')
+    rf = open('test set/text.eng', 'r')
     references = rf.readlines()
     tf = open('translation', 'r')
     translations = tf.readlines()

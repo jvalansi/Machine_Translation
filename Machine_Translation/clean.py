@@ -31,7 +31,6 @@ if __name__ == '__main__':
         f.append(args.files[i].readlines())
         args.files[i].close()
         ft.append(open('temp'+str(i), 'w'))
-    t = args.threshold
 
     pattern1 = r'(\S)([^\w\s])'
     pattern2 = r'([^\w\s])(\S)'
@@ -42,9 +41,11 @@ if __name__ == '__main__':
         f[0][i] = f[0][i].lower()
         f[0][i] = re.sub(pattern1, repl, f[0][i])
         f[0][i] = re.sub(pattern2, repl, f[0][i])
-        if(any(map(lambda x: len(x[i].split()) > t, f))):
+        if(any(map(lambda x: len(x[i].split()) > args.threshold, f))):
             continue
         for j in range(len(ft)):
+            f[j][i] = re.sub(r'^(\d+ )?(SOS )?',r'SOS ', f[j][i])
+            f[j][i] = re.sub(r'\r?\n',r' EOS\r\n', f[j][i])
             ft[j].write(f[j][i])
 
     for i in range(len(ft)):

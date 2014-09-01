@@ -35,7 +35,7 @@ def lines2lattice(ll):
                 phi = float(m.group(2))
                 d = 0
                 p = lmbd[0]*phi + lmbd[1]*p_LM + lmbd[2]*d
-                heapq.heappush(lattice,(p,phi,p_LM,f,e))
+                heapq.heappush(lattice,(p,phi,p_LM,0,f,e))
     lattice.sort(reverse=True)
     return(ln, lattice)
 
@@ -75,13 +75,13 @@ def decode(lattice,ln):
         for i in range(ln+1):
             stacks[i] = []
             uniques[i] = {}
-        heapq.heappush(stacks[0], (0,0,0,(0,),('SOS',)))
+        heapq.heappush(stacks[0], (0,0,0,0,(0,),('SOS',)))
         for s in stacks:
 #             logger.info(s)
 #             logger.debug(sys.getsizeof(stacks))
 #             i=0
-            for (p,q,r,f,e) in stacks[s]:
-                for (p_,q_,r_,f_,e_) in lattice:
+            for (p,q,r,d,f,e) in stacks[s]:
+                for (p_,q_,r_,d_,f_,e_) in lattice:
 #                     if not i%100000:
 #                         logger.info("sentence " + str(i) + ": " + time.strftime('%X'))
 #                         logger.info("sentence " + str(lattice.index((p_,q_,r_,f_,e_))))
@@ -90,27 +90,25 @@ def decode(lattice,ln):
                     if len(set(f).intersection(set(f_))) == 0:
                         f__ = f+f_
                         e__ = e+e_
-#                         if(abs(len(e) - f_[0]) > 0):
-#                             d_ = math.log(float(1)/abs(len(e) - f_[0]))
-#                         else:
-#                             d_ = 0
-#                         d__ = d+d_                        
+                        d_ = math.log(math.pow(0.5,abs(len(e) - f_[0])))
+                        d__ = d+d_                        
+                        d__ = 0
                         p__ = p+p_
                         q__ = q+q_
                         r__ = r+r_
 #                         p__ += lmbd*get_missing_ngram_prob(e,e_,ng,lm,lm_dict)
                         r__ += get_missing_ngram_prob(e,e_)
-                        p__ = lmbd[0]*q__+lmbd[1]*r__
+                        p__ = lmbd[0]*q__+lmbd[1]*r__ + lmbd[2]*d__
 #                     recombine with existing hypothesis if possible
                         if (e__ in uniques[len(f__)]) and (uniques[len(f__)][e__] > p__):
                             continue
                         uniques[len(f__)][e__] = p__
 #                     prune(stacks[s])
                         if(len(stacks[len(f__)]) > stack_size):
-                            heapq.heappushpop(stacks[len(f__)],(p__,q__,r__,f__,e__))
+                            heapq.heappushpop(stacks[len(f__)],(p__,q__,r__,d__,f__,e__))
                         else:
-                            heapq.heappush(stacks[len(f__)],(p__,q__,r__,f__,e__))
-                        hyp_logger.debug((p__,q__,r__,f__,e__))
+                            heapq.heappush(stacks[len(f__)],(p__,q__,r__,d__,f__,e__))
+                        hyp_logger.debug((p__,q__,r__,d__,f__,e__))
             if(len(stacks[s]) > 0):
                     largest = map(lambda x: str(x),heapq.nlargest(stack_size, stacks[s]))
                     largest_logger.debug(str(s))

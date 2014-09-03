@@ -71,9 +71,9 @@ def matrix2phrase(M):
                     while (j1_ > 0) & (len(numpy.nonzero(A[:,j1_])) == 0):
                         j2_ = j2+1
                         while (j2_ <= len(f)) & (len(numpy.nonzero(A[:, j2_])) == 0):
-                            BP.append((tuple(f[j1:j2]),tuple(e[i1:i2])))
+                            BP.append((tuple(f[j1_:j2_]),tuple(e[i1:i2])))
                             j2_ = j2_ + 1
-                        j1 = j1-1
+                        j1_ = j1_-1
 
     return BP
 

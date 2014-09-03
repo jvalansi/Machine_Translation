@@ -29,6 +29,8 @@ def parse_sentence(s,phrases):
                 phrases_dict = phrases_dict[:args.max_translations]
                 for (e,p) in phrases_dict:
                     lattice += " ".join(e) + " " + p + "\n"
+            elif(i == j-1):
+                lattice += "NaW" + " " + str(0) + "\n"
             lattice += "\n"
     return(lattice)
 

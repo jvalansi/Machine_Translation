@@ -1,0 +1,30 @@
+Train:
+cleaning:
+/***** execution command here ****************/
+python clean.py res/bible.eng res/bible.heb --threshold 60
+  
+word alignment:
+/***** execution command here ****************/
+cd res/
+./plain2snt.out bible.eng bible.heb
+./snt2cooc.out bible.eng.vcb bible.heb.vcb bible.eng_bible.heb.snt > bible.eng_bible.heb.cooc
+./snt2cooc.out bible.heb.vcb bible.eng.vcb bible.heb_bible.eng.snt > bible.heb_bible.eng.cooc
+./GIZA++ -S bible.heb.vcb -T bible.eng.vcb -C bible.heb_bible.eng.snt -COOC bible.heb_bible.eng.cooc
+mv `find . -name "*.A3.final" -print0` eng.heb
+./GIZA++ -S bible.eng.vcb -T bible.heb.vcb -C bible.eng_bible.heb.snt -COOC bible.eng_bible.heb.cooc
+mv `find . -name "*.A3.final" -print0` heb.eng
+cd ..
+
+Phrase alignment and phrase table
+/***** execution command here ****************/
+python phrase_align.py res/eng.heb res/heb.eng res/phrases
+
+Test:
+Lattice generator:
+/***** execution command here ****************/
+python clean.py test\ set/text.eng test\ set/test.heb --threshold 1000
+python lattice_generator.py test\ set/test.heb res/phrases
+
+Stack decoder
+/***** execution command here ****************/
+python stack_decoder.py -lmbd 0.2 0.8 0 --heuristic --small_lm

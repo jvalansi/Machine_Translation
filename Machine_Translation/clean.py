@@ -8,7 +8,7 @@ import re
 import os
 
 def get_args():
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='process sentences to enable alignment.')
     parser.add_argument('files', type=argparse.FileType('r+'), nargs='+', 
                        help='files (first one must be in english)')
     parser.add_argument('-t','--threshold', type=int, default=60,

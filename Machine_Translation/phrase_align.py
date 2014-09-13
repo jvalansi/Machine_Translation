@@ -86,12 +86,12 @@ def join_matrices(M1,M2):
     return matrix
 
 def get_args():
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('-e2f','--e2ffile', type=argparse.FileType('r+'), 
+    parser = argparse.ArgumentParser(description='Phrase alignment and phrase table.')
+    parser.add_argument('e2ffile', type=argparse.FileType('r+'), default='res/eng.heb',
                        help='english to foreign file to align')
-    parser.add_argument('-f2e','--f2efile', type=argparse.FileType('r+'), 
+    parser.add_argument('f2efile', type=argparse.FileType('r+'), default='res/heb.eng',
                        help='foreign to english file to align')
-    parser.add_argument('-p','--pfile', type=argparse.FileType('w'), 
+    parser.add_argument('pfile', type=argparse.FileType('w'), default='res/phrases',
                        help='aligned phrases file')
     return(parser.parse_args())
 

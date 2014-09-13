@@ -186,9 +186,9 @@ def get_args():
                        help='translations file')
     parser.add_argument('-s','--stack_size', type=int, default=1000, help='stack size')
     parser.add_argument('-ng','--n_gram', type=int, default=3, help='n gram size')
-    parser.add_argument('-log','--log_level', default='debug', help='log level')
+    parser.add_argument('-log','--log_level', default='info', help='log level')
     parser.add_argument('-t','--threshold', default=-10, help='probability threshold for adding phrase')
-    parser.add_argument('-l','--limit', default=15, help='max sentences to translate')    
+    parser.add_argument('-l','--limit', help='max sentences to translate')    
     parser.add_argument('--heuristic', action='store_true',help="consider heuristic function")
     parser.add_argument('--small_lm', action='store_true',help="add language model of smaller ngrams for the beginning of the sentence")
     return(parser.parse_args())
@@ -254,35 +254,37 @@ def main(args):
         translation_file.write(' '.join(translation[-1])+'\n')
         translation_file.close()
         
-        if(len(translations)>args.limit):
+        if(args.limit and len(translations)>args.limit):
             break
         
     print("finished @ "+ time.strftime('%X'))
 
 if __name__ == '__main__':
     args = get_args()
-    for i in range(11):
-        args.lambda_value = [i*0.1,1-(i*0.1),0]
-        for j in range(1,4):
-            args.stack_size = j*500
-            fn = 'translations/translation.'+str(i)+'.'+str(j)
-            args.translation = open(fn,'w')
-            print(fn)
-            main(args)
-            args.heuristic = True
-            fn = 'translations/translation.'+str(i)+'.'+str(j)+'.h'
-            args.translation = open(fn,'w')
-            print(fn)
-            main(args)
-            args.small_lm = True
-            fn = 'translations/translation.'+str(i)+'.'+str(j)+'.h.s'
-            args.translation = open(fn,'w')
-            print(fn)
-            main(args)
-            args.heuristic = False
-            fn = 'translations/translation.'+str(i)+'.'+str(j)+'.s'
-            args.translation = open(fn,'w')
-            print(fn)
-            main(args)
-            args.small_lm = False
+    main(args)
+#     args.limit = 50
+#     for i in range(6):
+#         args.lambda_value = [i*0.2,1-(i*0.2),0]
+# #         for j in range(1,4):
+# #             args.stack_size = j*500
+#         fn = 'translations/translation.'+str(i)
+#         args.translation = open(fn,'w')
+#         print(fn)
+#         main(args)
+#         args.heuristic = True
+#         fn = 'translations/translation.'+str(i)+'.h'
+#         args.translation = open(fn,'w')
+#         print(fn)
+#         main(args)
+#         args.small_lm = True
+#         fn = 'translations/translation.'+str(i)+'.h.s'
+#         args.translation = open(fn,'w')
+#         print(fn)
+#         main(args)
+#         args.heuristic = False
+#         fn = 'translations/translation.'+str(i)+'.s'
+#         args.translation = open(fn,'w')
+#         print(fn)
+#         main(args)
+#         args.small_lm = False
 

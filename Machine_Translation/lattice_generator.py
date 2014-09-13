@@ -34,20 +34,24 @@ def parse_sentence(s,phrases):
             lattice += "\n"
     return(lattice)
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('-s','--sentences_file', type=argparse.FileType('r+'), 
+def get_args():
+    parser = argparse.ArgumentParser(description='Generate lattice.')
+    parser.add_argument('sentences_file', type=argparse.FileType('r+'), 
                        help='File of Hebrew sentences to be translated by the system. Each sentence should be provided in a single line.')
-    parser.add_argument('-p','--phrase_table', type=argparse.FileType('r+'), 
+    parser.add_argument('phrase_table', type=argparse.FileType('r+'), 
                        help='File containing the phrase table.')
     parser.add_argument('-ps','--phrase_size', type=int, default=8,
                        help='phrase_size')
     parser.add_argument('-mp','--max_translations', type=int, default=8,
                        help='max allowed translations for phrase')
-    args = parser.parse_args()
+    return(parser.parse_args())
 
+
+if __name__ == '__main__':
+
+    args = get_args()
     sentences = args.sentences_file.readlines()
-    phrase_file = args.phrase_table.readlines();
+    phrase_file = args.phrase_table.readlines()
     
     phrases = {}
     print("phrases to tuples")
